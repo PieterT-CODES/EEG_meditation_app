@@ -1,0 +1,13 @@
+{
+  "name": "bbit-reader",
+  "version": "58.0.0",
+  "type": "module",
+  "main": "bbit-reader.js",
+  "scripts": {
+    "start": "node bbit-reader.js"
+  },
+  "dependencies": {
+    "brainflow": "^5.12.0",
+    "fft.js": "*"
+  }
+}

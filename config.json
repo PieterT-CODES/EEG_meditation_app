@@ -1,0 +1,19 @@
+{
+  "app_title": "BBit Reader",
+  "mode": "native",
+  "serial": "",
+  "mains": 50,
+  "bled_port": "COM4",
+  "channel_index": 0,
+  "refresh_ms": 180,
+  "top_bar_width": 36,
+  "history_window_width": 36,
+  "right_panel_width": 20,
+  "calibration_seconds": 60,
+  "channel_labels": [
+    "T3",
+    "T4",
+    "O1",
+    "O2"
+  ]
+}

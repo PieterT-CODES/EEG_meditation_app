@@ -1,0 +1,76 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>EEG Live Dashboard</title>
+<style>
+  :root { --fg:#222; --bg:#fff; --ok:#e8f5e9; --warn:#fff8e1; --bar:#eee; --fill:#4caf50; }
+  body { font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; color: var(--fg); background: var(--bg); }
+  h1 { margin: 0 0 8px; font-size: 22px; }
+  .pill { display:inline-block; padding:4px 10px; border-radius:16px; background:#eee; font-size:14px; }
+  .ok { background: var(--ok); }
+  .warn { background: var(--warn); }
+  .row { display: grid; grid-template-columns: 180px 1fr 70px; gap: 12px; align-items: center; margin: 10px 0; }
+  .bar { height: 12px; background: var(--bar); border-radius: 6px; overflow: hidden; }
+  .fill { height: 100%; width: 0%; background: var(--fill); transition: width .12s linear; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  #log { margin-top:16px; max-height: 240px; overflow:auto; background:#fafafa; border:1px solid #eee; padding:8px; font-size:12px; }
+</style>
+
+<h1>EEG – Live Metrics</h1>
+<div id="status" class="pill">connecting…</div>
+
+<div class="row"><div>Score</div><div class="bar"><div id="score" class="fill"></div></div><div id="scoreVal" class="mono">0</div></div>
+<div class="row"><div>EI (β/(α+θ))</div><div class="bar"><div id="ei" class="fill"></div></div><div id="eiVal" class="mono">--</div></div>
+<div class="row"><div>SC (SMR/Hiβ)</div><div class="bar"><div id="sc" class="fill"></div></div><div id="scVal" class="mono">--</div></div>
+<div class="row"><div>DR (θ/α)</div><div class="bar"><div id="dr" class="fill"></div></div><div id="drVal" class="mono">--</div></div>
+<div class="row"><div>HB (20–30Hz)</div><div class="bar"><div id="hb" class="fill"></div></div><div id="hbVal" class="mono">--</div></div>
+
+<details>
+  <summary>Raw JSON (last 20)</summary>
+  <div id="log" class="mono"></div>
+</details>
+
+<script>
+const els = id => document.getElementById(id);
+const score = els('score'), scoreVal = els('scoreVal');
+const ei = els('ei'), eiVal = els('eiVal');
+const sc = els('sc'), scVal = els('scVal');
+const dr = els('dr'), drVal = els('drVal');
+const hb = els('hb'), hbVal = els('hbVal');
+const statusEl = els('status');
+const logEl = els('log');
+
+const es = new EventSource('/stream');
+es.onopen = () => { statusEl.textContent = 'live'; statusEl.className = 'pill ok'; };
+es.onerror = () => { statusEl.textContent = 'disconnected'; statusEl.className = 'pill warn'; };
+
+const clamp01 = (x, min, max) => Math.max(0, Math.min(1, (x-min)/(max-min)));
+function setMetric(elFill, elVal, v, visMin, visMax) {
+  const val = (typeof v==='number' && isFinite(v)) ? v : NaN;
+  elVal.textContent = isFinite(val) ? val.toFixed(2) : '--';
+  elFill.style.width = (100*clamp01(val, visMin, visMax)).toFixed(1) + '%';
+}
+
+const recent = [];
+function addLog(obj){
+  recent.push(obj);
+  while (recent.length > 20) recent.shift();
+  logEl.textContent = recent.map(o => JSON.stringify(o)).join('\n');
+}
+
+es.addEventListener('eeg', (ev) => {
+  const d = JSON.parse(ev.data);
+  const s = Math.max(0, Math.min(100, +d.score||0));
+  score.style.width = s + '%';
+  scoreVal.textContent = s.toFixed(0);
+
+  setMetric(ei, eiVal, d.metrics?.EI, 0.2, 3.0);
+  setMetric(sc, scVal, d.metrics?.SC, 0.2, 3.0);
+  setMetric(dr, drVal, d.metrics?.DR, 0.2, 3.0);
+  setMetric(hb, hbVal, d.metrics?.HB, 0.0, 5.0);
+
+  document.body.style.background = d.flags?.artifact ? '#fff8e1' : '#ffffff';
+
+  addLog(d);                      // show last 20 JSONs
+  console.log('EEG JSON:', d);    // also visible in browser console
+});
+</script>

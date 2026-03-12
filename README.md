@@ -104,6 +104,51 @@ final_score,72.441
 
 Each row is one second of data. `no_contact=1` marks samples where electrode contact was lost. The last line contains the session average score.
 
+## EEG Metrics Reference
+
+After calibration completes, the right panel of the terminal displays four live metrics. The same values are streamed to the browser visualizer. All four are shown whenever you are not actively measuring.
+
+**EI — Engagement Index**
+Formula: `beta (12–20 Hz) / (alpha + theta)`
+Higher EI indicates active attention or focus. Lower EI indicates relaxation or drowsiness.
+
+**SC — SMR / High Beta (calm focus)**
+Formula: `SMR (12–15 Hz) / high beta (20–30 Hz)`
+Higher SC indicates calm, stable attention without tension. Lower SC suggests nervousness or muscle artifacts.
+
+**DR — Drowsiness Ratio**
+Formula: `theta / alpha`
+Higher DR indicates drowsiness or dreaminess. Low DR means alertness.
+
+**HB — High Beta Power**
+Direct power in the `20–30 Hz` range. Elevated HB often reflects muscle tension or stress and also serves as an artifact indicator.
+
+During a session the score weights these metrics as: `score = 0.45×EI + 0.25×SC − 0.20×DR − 0.10×HB`, normalized to 0–100 around your personal baseline.
+
+## Meditation Game — EEG Aura Mandala
+
+The browser visualizer (`inner_odyssey.html`) is a 2-minute scored meditation game. The animated mandala responds in real time to your EEG score — calm focus makes it expand and stabilize; stress or distraction breaks it apart.
+
+**How to play:**
+1. Start the app and calibrate (press **C**, wait ~60 seconds)
+2. Open `http://localhost:8080/inner_odyssey.html` in your browser
+3. Enter your name and click **Start**
+4. After 2 minutes your session score is evaluated and recorded in the results table
+
+**5 techniques for a higher score:**
+
+1. **Breathe slowly and deliberately** — extend your exhale to reduce heart rate and beta activity
+2. **Relax your face and forehead muscles** — reduces HB, which is often caused by facial muscle tension
+3. **Fix your attention on a single point** — a visual anchor or internal image stabilizes the SMR rhythm
+4. **Observe thoughts without engaging them** — letting them pass without judgment balances theta/alpha activity
+5. **Cultivate a feeling of gratitude or calm** — emotional states influence EEG immediately and reduce stress beta
+
+**3 things that disrupt meditation:**
+
+1. **Muscle tension (forehead, eyes, jaw)** — raises HB and collapses the mandala
+2. **Irregular breathing or breath-holding** — triggers a stress response and pushes the score down
+3. **Distraction (phone, noise, wandering thoughts)** — activates beta waves and causes the score to rise
+
 ## Limitations
 
 - Requires a BrainBit headset — no support for other EEG devices without modifying the BrainFlow board ID
@@ -135,11 +180,6 @@ Each row is one second of data. `no_contact=1` marks samples where electrode con
 **`npm install` fails with BrainFlow errors**
 - Ensure you are running Node.js 18 or higher: `node --version`
 - On Linux, you may need `libudev-dev`: `sudo apt install libudev-dev`
-
-
-Support
-
-If this project helped you:
 
 ## License
 

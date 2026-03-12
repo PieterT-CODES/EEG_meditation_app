@@ -2,7 +2,9 @@
 
 ## What this tool does
 
-BBit Reader reads live EEG data from a BrainBit headset, computes brainwave band power in real time, and displays a terminal dashboard alongside a browser-based meditation visualizer. It calibrates a personal baseline for each user, then scores meditation quality continuously based on four neurofeedback metrics. Session results are saved to CSV log files.
+BBit Reader is a real-time EEG neurofeedback app built around a simple challenge: sit still for two minutes and try to reach the deepest calm you can. Your brainwaves are read live from a BrainBit headset, processed into a 0–100 meditation score, and reflected back to you through an animated mandala in the browser — the calmer you are, the more it blooms. After the session ends, your score is recorded so you can compare runs and see whether your practice is improving over time.
+
+Under the hood, the app calibrates a personal EEG baseline for each user, computes four neurofeedback metrics (EI, SC, DR, HB) from the live spectrum, and logs every second of data to a CSV file. A terminal dashboard runs alongside the browser visualizer for those who want to watch the raw signal and band power in detail.
 
 ## Main capabilities
 
@@ -180,6 +182,12 @@ The browser visualizer (`inner_odyssey.html`) is a 2-minute scored meditation ga
 **`npm install` fails with BrainFlow errors**
 - Ensure you are running Node.js 18 or higher: `node --version`
 - On Linux, you may need `libudev-dev`: `sudo apt install libudev-dev`
+
+## Support
+
+If this project helped you:
+
+[![Support](https://img.shields.io/badge/☕_buy_me_dinner-support-black?style=for-the-badge)](https://ko-fi.com/pietertcodes)
 
 ## License
 
